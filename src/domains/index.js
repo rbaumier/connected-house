@@ -2,6 +2,6 @@
 
 module.exports = () => {
   return {
-    Hello: require('./Hello.Repository')()
+    Temperature: require('./Temperature.Repository')
   };
 };

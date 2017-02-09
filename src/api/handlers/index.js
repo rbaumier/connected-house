@@ -2,6 +2,6 @@
 
 module.exports = (domains) => {
   return {
-    hello: require('./hello.handlers')(domains)
+    temperature: require('./tempature.handlers')(domains)
   };
 };
