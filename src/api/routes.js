@@ -7,6 +7,7 @@ const limit = 50;
 module.exports = (io, domains, config, logger, f) => {
   client.on('connect', function() {
     client.subscribe('temperature:sensor:new');
+    client.subscribe('temperature:sensor:alert');
   });
 
   client.on('error', function(err) {
@@ -19,11 +20,18 @@ module.exports = (io, domains, config, logger, f) => {
     });
 
     socket.on('temperature:limit:new', (temperature, f) => {
+      console.log('limit reached');
       client.publish('temperature:limit:set', '' + temperature);
     });
   });
 
   client.on('message', (topic, message) => {
+    if(topic === 'temperature:sensor:alert') {
+      console.log('alert')
+      io.emit('temperature:sensor:alert', message.toString());
+      return;
+    }
+
     if (topic === 'temperature:sensor:new') {
       const temperature = message.toString();
       console.log(`saving ${temperature}*C`);

@@ -6,12 +6,16 @@ const _ = require('lodash');
 const client = mqtt.connect('mqtt://nurhwizw:zXRmcOQcsnBO@m21.cloudmqtt.com:18728');
 const SET_LIMIT = 'temperature:limit:set';
 const SENSOR_NEW = 'temperature:sensor:new';
-
+const SENSOR_ALERT = 'temperature:sensor:alert';
 
 var currentTemperature = 18;
 
+function getRandomArbitrary(min, max) {
+  return (Math.random() * (max - min) + min).toFixed(1);
+}
+
 const randomTemperature = (around) => {
-  return (Math.random() * 2 + parseInt(around, 10) - 1).toFixed(1);
+  return getRandomArbitrary(around - 3.1, around + 3.1);
 }
 
 const setTemperatureTo = (limit) => {
@@ -25,6 +29,7 @@ client.on('connect', function() {
   console.log('connected');
   client.subscribe(SET_LIMIT);
   client.subscribe(SENSOR_NEW);
+  client.subscribe(SENSOR_ALERT);
 });
 
 client.on('message', function(topic, message) {
@@ -38,7 +43,10 @@ client.on('message', function(topic, message) {
 (function sendRandomTemperature() {
   setTimeout(function() {
     const temperature = randomTemperature(currentTemperature);
-    console.log('sending random temperature: ' + temperature);
+    if (temperature > currentTemperature + 3 || temperature < currentTemperature - 3) {
+      console.log('limit reached');
+      client.publish(SENSOR_ALERT, temperature);
+    }
     client.publish(SENSOR_NEW, temperature);
     sendRandomTemperature();
   }, 5000);
