@@ -17,12 +17,6 @@ module.exports = (io, domains, config, logger, f) => {
       domains.Temperature.find({}, f);
     });
 
-    socket.on('temperature:get', (f) => {
-      domains.Temperature.findOne({}, {}, { sort: { 'created_at': -1 } }, function(err, temperature) {
-        f(null, temperature);
-      });
-    });
-
     socket.on('temperature:limit:new', (temperature, f) => {
       client.publish('temperature', '' + temperature);
     });
