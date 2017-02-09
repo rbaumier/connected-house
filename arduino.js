@@ -43,7 +43,7 @@ client.on('message', function(topic, message) {
 (function sendRandomTemperature() {
   setTimeout(function() {
     const temperature = randomTemperature(currentTemperature);
-    if (temperature > currentTemperature + 1 || temperature < currentTemperature - 1) {
+    if (temperature <= 10 || temperature => 25) {
       console.log('limit reached');
       client.publish(SENSOR_ALERT, temperature);
     }
