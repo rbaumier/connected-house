@@ -2,6 +2,7 @@
 
 const mqtt = require('mqtt');
 const client = mqtt.connect('mqtt://nurhwizw:zXRmcOQcsnBO@m21.cloudmqtt.com:18728');
+const limit = 50;
 
 module.exports = (io, domains, config, logger, f) => {
   client.on('connect', function() {
@@ -18,7 +19,7 @@ module.exports = (io, domains, config, logger, f) => {
     });
 
     socket.on('temperature:limit:new', (temperature, f) => {
-      client.publish('temperature', '' + temperature);
+      client.publish('temperature:limit:set', '' + temperature);
     });
   });
 
@@ -34,6 +35,9 @@ module.exports = (io, domains, config, logger, f) => {
           return console.log("err:", err);
         }
         io.emit('temperature:sensor:new', createdTemperature);
+        // if(createdTemperature.value > limit) {
+        //   io.emit('temperature:sensor:alarm', createdTemperature);
+        // }
       });
     }
   });
