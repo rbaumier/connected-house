@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = () => {
+module.exports = (mongoose) => {
   return {
-    Temperature: require('./Temperature.Repository')
+    Temperature: require('./Temperature.Repository')(mongoose)
   };
 };

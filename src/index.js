@@ -4,13 +4,11 @@ const mongoose = require('mongoose');
 
 module.exports = function(io, logger, f) {
   const config = require('./config')(logger);
-  const services = {};
-  // const services = require('./services')(config);
 
   mongoose.connect(config.mongodb.connectionString);
   mongoose.connection.on('error', f);
 
-  const domains = require('./domains')();
+  const domains = require('./domains')(mongoose);
 
-  require('./api')(io, domains, services, config, logger, f);
+  require('./api')(io, domains, config, logger, f);
 };
