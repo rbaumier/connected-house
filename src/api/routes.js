@@ -5,7 +5,7 @@ const client = mqtt.connect('mqtt://nurhwizw:zXRmcOQcsnBO@m21.cloudmqtt.com:1872
 
 module.exports = (io, domains, config, logger, f) => {
   client.on('connect', function() {
-    client.subscribe('temperature');
+    client.subscribe('temperature:sensor:new');
   });
 
   client.on('error', function(err) {
@@ -25,13 +25,24 @@ module.exports = (io, domains, config, logger, f) => {
 
     socket.on('temperature:limit:new', (temperature, f) => {
       client.publish('temperature', '' + temperature);
+    });
+  });
+
+  client.on('message', (topic, message) => {
+    console.log("topic:", topic);
+    if (topic === 'temperature:sensor:new') {
+      const temperature = message.toString();
+      console.log(`saving ${temperature}*C`);
       domains.Temperature.create({
         date: +new Date(),
         value: temperature
       }, (err) => {
-        f(err);
+        if (err) {
+          return console.log("err:", err);
+        }
+        io.emit('temperature:sensor:new', temperature);
       });
-    });
+    }
   });
 
   f(null, config);
