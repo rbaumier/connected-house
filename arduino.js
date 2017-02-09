@@ -15,7 +15,7 @@ function getRandomArbitrary(min, max) {
 }
 
 const randomTemperature = (around) => {
-  return getRandomArbitrary(around - 3.1, around + 3.1);
+  return getRandomArbitrary(around - 1.1, around + 1.1);
 }
 
 const setTemperatureTo = (limit) => {
@@ -43,7 +43,7 @@ client.on('message', function(topic, message) {
 (function sendRandomTemperature() {
   setTimeout(function() {
     const temperature = randomTemperature(currentTemperature);
-    if (temperature > currentTemperature + 3 || temperature < currentTemperature - 3) {
+    if (temperature > currentTemperature + 1 || temperature < currentTemperature - 1) {
       console.log('limit reached');
       client.publish(SENSOR_ALERT, temperature);
     }
