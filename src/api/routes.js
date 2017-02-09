@@ -29,18 +29,17 @@ module.exports = (io, domains, config, logger, f) => {
   });
 
   client.on('message', (topic, message) => {
-    console.log("topic:", topic);
     if (topic === 'temperature:sensor:new') {
       const temperature = message.toString();
       console.log(`saving ${temperature}*C`);
       domains.Temperature.create({
         date: +new Date(),
         value: temperature
-      }, (err) => {
+      }, (err, createdTemperature) => {
         if (err) {
           return console.log("err:", err);
         }
-        io.emit('temperature:sensor:new', temperature);
+        io.emit('temperature:sensor:new', createdTemperature);
       });
     }
   });
